@@ -1,0 +1,23 @@
+{
+  "name": "calorie_diary",
+  "version": "1.0.0",
+  "description": "An app for tracking calorie intake of the day.",
+  "main": "main.js",
+  "scripts": {
+    "sass": "node-sass -w main.scss -o dist/css/ --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EpiccookieRawr/calorie_diary.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EpiccookieRawr/calorie_diary/issues"
+  },
+  "homepage": "https://github.com/EpiccookieRawr/calorie_diary#readme",
+  "dependencies": {
+    "node-sass": "^4.12.0"
+  }
+}

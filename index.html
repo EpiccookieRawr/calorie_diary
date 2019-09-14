@@ -5,94 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Calorie Diary</title>
-    <link rel="stylesheet" href="main.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="/dist/css/main.css">
 </head>
 <body>
-    <div id="diary-entry" class="container">
-        <h1>Calorie Diary</h1>
-        <div class="left-column">
-            <div class="new-item-div">
-                <h2>Add New Item</h2>
-                <input type="text" name="newItem" id="new-item">
+    <div id="calorie-diary" class="container">
+        <div id="diary-entry">
+            <div class="heading">
+                <h1 class="main-heading py-1">Calorie Diary</h1>
             </div>
-            <div class="search-results">
-                <h2>Search Results</h2>
-                <ul class="results-items">
-                    <li>1 cup Mango cheese, finely grated</li>
-                    <li>24 oz baby arugula</li>
-                    <li>1 cup red onion, slices</li>
-                    <li>12 grape tomatoes</li>
-                    <li>6 tbsps olive oil</li>
-                    <li>1 tbsp balsamic vinegar</li>
-                </ul>
-            </div>
-            <div class="recent-added">
-                <h2>Recently Added Food</h2>
-                <ul class="recent-items">
-                    <li>1 cup Mango cheese, finely grated</li>
-                    <li>24 oz baby arugula</li>
-                    <li>1 cup red onion, slices</li>
-                    <li>12 grape tomatoes</li>
-                    <li>6 tbsps olive oil</li>
-                </ul>
-            </div>
-        </div>
-        <div class="right-column">
-            <div id="breakfast-div" class="meal-section">
-                <h2>Breakfast</h2>
-                <ul class="ingredients">
-                    <li id="item-0">
-                        <strong>Cookie: </strong> <em>400 Calories</em>
-                        <a href="#" class="secondary-content">
-                          <i class="fa fa-pencil"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div id="lunch-div" class="meal-section">
-                <h2>Lunch</h2>
-                <ul class="ingredients">
-                    <li id="item-1">
-                        <strong>Cookie: </strong> <em>400 Calories</em>
-                        <a href="#" class="secondary-content">
-                          <i class="fa fa-pencil"></i>
-                        </a>
-                    </li>
-                    <li id="item-1">
-                        <strong>creme: </strong> <em>400 Calories</em>
-                        <a href="#" class="secondary-content">
-                          <i class="fa fa-pencil"></i>
-                        </a>
-                    </li>
-                    <li id="item-1">
-                        <strong>butter: </strong> <em>400 Calories</em>
-                        <a href="#" class="secondary-content">
-                          <i class="fa fa-pencil"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div id="dinner-div" class="meal-section">
-                <h2>Dinner</h2>
-                <ul class="ingredients">
-                    <li id="item-2">
-                        <strong>fruits: </strong> <em>400 Calories</em>
-                        <a href="#" class="secondary-content">
-                          <i class="fa fa-pencil"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div id="snack-div" class="meal-section">
-                <h2>Snack</h2>
-                <ul class="ingredients">
-                    <li id="item-3">
-                        <strong>Sanck: </strong> <em>400 Calories</em>
-                        <a href="#" class="secondary-content">
-                          <i class="fa fa-pencil"></i>
-                        </a>
-                    </li>
-                </ul>
+            <div class="main-content">
+                <div class="left-column p-2">
+                    <div class="new-item-div">
+                        <h2>Add New Item</h2>
+                        <input type="text" name="newItem" id="new-item">
+                    </div>
+                    <div class="search-results">
+                        <h2>Search Results</h2>
+                        <ul class="results-items">
+                            <li>1 cup Mango cheese, finely grated</li>
+                            <li>24 oz baby arugula</li>
+                            <li>1 cup red onion, slices</li>
+                            <li>12 grape tomatoes</li>
+                            <li>6 tbsps olive oil</li>
+                            <li>1 tbsp balsamic vinegar</li>
+                        </ul>
+                    </div>
+                    <div class="recent-added">
+                        <h2>Recently Added Food</h2>
+                        <ul class="recent-items">
+                            <li>1 cup Mango cheese, finely grated</li>
+                            <li>24 oz baby arugula</li>
+                            <li>1 cup red onion, slices</li>
+                            <li>12 grape tomatoes</li>
+                            <li>6 tbsps olive oil</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="right-column">
+                    <div id="breakfast-div" class="meal-section">
+                        <h2>Breakfast</h2>
+                        <ul class="ingredients">
+                            <li>
+                                <div class="ingredient-info">
+                                    <input type="checkbox" name="item-1" id="" class="selected">
+                                    <strong>Cookie: </strong> <em>400 Calories</em>
+                                </div>
+                                <a href="#" class="edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="lunch-div" class="meal-section">
+                        <h2>Lunch</h2>
+                        <ul class="ingredients">
+                                <li>
+                                    <div class="ingredient-info">
+                                        <input type="checkbox" name="item-1" id="" class="selected">
+                                        <strong>Cookie: </strong> <em>400 Calories</em>
+                                    </div>
+                                    <a href="#" class="edit">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <div class="ingredient-info">
+                                        <input type="checkbox" name="item-2" id="" class="selected">
+                                        <strong>Cookie: </strong> <em>400 Calories</em>
+                                    </div>
+                                    <a href="#" class="edit">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <div class="ingredient-info">
+                                        <input type="checkbox" name="item-3" id="" class="selected">
+                                        <strong>Cookie: </strong> <em>400 Calories</em>
+                                    </div>
+                                    <a href="#" class="edit">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                </li>
+                        </ul>
+                    </div>
+                    <div id="dinner-div" class="meal-section">
+                        <h2>Dinner</h2>
+                        <ul class="ingredients">
+                            <li>
+                                <div class="ingredient-info">
+                                    <input type="checkbox" name="item-1" id="" class="selected">
+                                    <strong>Cookie: </strong> <em>400 Calories</em>
+                                </div>
+                                <a href="#" class="edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="snack-div" class="meal-section">
+                        <h2>Snack</h2>
+                        <ul class="ingredients">
+                            <li>
+                                <div class="ingredient-info">
+                                    <input type="checkbox" name="item-1" id="" class="selected">
+                                    <strong>Cookie: </strong> <em>400 Calories</em>
+                                </div>
+                                <a href="#" class="edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
