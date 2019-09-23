@@ -61,12 +61,6 @@ class nutritionix_api {
     $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
     if (curl_errno($ch) || $httpcode != 200) {
-        // $params = array(
-        //   'curl_request' => $url_request,
-        //   'type' => $request_type,
-        //   'request_data' => $request_data,
-        // );
-        //$this->error_log('request', $params, $response);
         return false;
     } else {
       $response = json_decode($response,true);
@@ -79,6 +73,8 @@ class nutritionix_api {
 }
 
 $nutritionix_api = new nutritionix_api();
-$response = $nutritionix_api->instant("chicken");
 
-echo json_encode($response);
+if(isset($_GET['keyword'])) {
+  $response = $nutritionix_api->instant($_GET['keyword']);
+  echo json_encode($response);
+}
