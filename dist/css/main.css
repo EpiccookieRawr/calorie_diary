@@ -22,6 +22,9 @@ ul {
 .active {
   display: block !important; }
 
+.current {
+  font-weight: bold; }
+
 .container {
   max-width: 1500px;
   margin: 0 auto; }
@@ -48,6 +51,11 @@ ul {
           margin-bottom: 0.5rem; }
       #diary-entry .main-content .left-column .search-results {
         height: 450px; }
+        #diary-entry .main-content .left-column .search-results .pagination {
+          float: right; }
+          #diary-entry .main-content .left-column .search-results .pagination span {
+            padding-right: 0.5rem;
+            cursor: pointer; }
         #diary-entry .main-content .left-column .search-results .result-details h3 {
           font-size: 17px; }
         #diary-entry .main-content .left-column .search-results .result-details .results-items {

@@ -25,18 +25,26 @@ const uICtrl = (function(){
             const resultDetails = document.querySelector(uISelector.resultDetails);
             const pagination = getPagination(data.branded);
             const brandDiv = document.createElement('div');
-            const brandh3 = document.createElement('h3');
+
+            const h3 = document.createElement('h3');
+            const resultsDiv = document.createElement('div');
             const pageDiv = document.createElement('div');
 
-            brandh3.textContent = 'Branded Products'; 
-            brandDiv.appendChild(brandh3);
+            brandDiv.className = 'branded-products-results';
+            h3.textContent = 'Branded Products'; 
+            resultsDiv.className = 'results';
+            pageDiv.className = 'pagination';
+            
             pagination.forEach((page, pageIndex) => {
                 const ul = document.createElement('ul');
-                ul.className = 'results-items';
-                ul.id = 'branded-page-' + pageIndex;
-                if(pageIndex === 0) ul.classList.add('active');
+                ul.className = 'results-items page-content-' + pageIndex;
                 const span = document.createElement('span');
+                span.className = 'page page-' + pageIndex;
                 span.textContent = pageIndex;
+                if(pageIndex === 0) {
+                    ul.classList.add('active');
+                    span.classList.add('current');   
+                }
                 pageDiv.appendChild(span);
                 page.forEach(currentBrand => {
                     const li = document.createElement('li');
@@ -44,9 +52,12 @@ const uICtrl = (function(){
                     li.innerHTML = `<p>${currentBrand.food_name}</p><p>${currentBrand.brand_name}</p><p>${currentBrand.nf_calories} calories</p>`;
                     ul.appendChild(li);
                 });
-                brandDiv.appendChild(ul);
+                resultsDiv.appendChild(ul);
             });
-            resultDetails.appendChild(pageDiv);
+
+            brandDiv.appendChild(h3);
+            brandDiv.appendChild(pageDiv);
+            brandDiv.appendChild(resultsDiv);
             resultDetails.appendChild(brandDiv);
         }
     }
@@ -73,9 +84,22 @@ const uICtrl = (function(){
         return pagination;
     }
 
+    const showPage = function(e) {
+        const pageNumber = parseInt(e.target.textContent);
+        const paginationDiv = e.target.parentElement;
+        const contentDiv = e.target.parentElement.nextSibling;
+        if(typeof pageNumber === 'number') {
+            paginationDiv.querySelector('.current').classList.remove('current');
+            paginationDiv.querySelector('.page-'+pageNumber).classList.add('current');
+            contentDiv.querySelector('.active').classList.remove('active');
+            contentDiv.querySelector('.page-content-'+pageNumber).classList.add('active');
+        }
+    }
+
     return {
         uISelector,
-        researchResult
+        researchResult,
+        showPage
     }
 })();
 
@@ -91,6 +115,11 @@ const appCtrl = (function(dataCtrl, uICtrl){
 
     function loadEventListener() {
         document.querySelector(uISelector.newItem).addEventListener('keyup', searchKeyword);
+        document.querySelector(uISelector.resultDetails).addEventListener('click', changePage);
+    }
+
+    function changePage(e) {
+        if(e.target.classList.contains('page')) uICtrl.showPage(e);
     }
 
     function searchKeyword(e) {
