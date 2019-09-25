@@ -1,12 +1,19 @@
 const dataCtrl = (function(){
     const getSearchResult = function(keyword) {
-        return fetch('/includes/api.php?keyword=' + keyword)
+        return fetch('/includes/api.php?search=' + keyword)
         .then(res => res.json())
         .then(data => data).catch(error => error);
     }
 
+    const getProductResult = function(productID) {
+        return fetch('/includes/api.php?productID=' + productID)
+        .then(res => res.json())
+        .then(data => data).catch(error => error);
+    } 
+
     return {
-        getSearchResult
+        getSearchResult,
+        getProductResult
     }
 })();
 
@@ -49,6 +56,7 @@ const uICtrl = (function(){
                 page.forEach(currentBrand => {
                     const li = document.createElement('li');
                     li.id = `item-id-${currentBrand.nix_item_id}`;
+                    li.className = "item-list";
                     li.innerHTML = `<p>${currentBrand.food_name}</p><p>${currentBrand.brand_name}</p><p>${currentBrand.nf_calories} calories</p>`;
                     ul.appendChild(li);
                 });
@@ -115,7 +123,13 @@ const appCtrl = (function(dataCtrl, uICtrl){
 
     function loadEventListener() {
         document.querySelector(uISelector.newItem).addEventListener('keyup', searchKeyword);
-        document.querySelector(uISelector.resultDetails).addEventListener('click', changePage);
+        document.querySelector(uISelector.resultDetails).addEventListener('click', eventsSearch);
+        document.querySelector(uISelector.resultDetails).addEventListener('click', getProductInfo);
+    }
+
+    function eventsSearch(e) {
+        if(e.target.classList.contains('page')) changePage(e);
+        if(e.target.classList.contains('item-list')) getProductInfo(e);
     }
 
     function changePage(e) {
@@ -129,10 +143,25 @@ const appCtrl = (function(dataCtrl, uICtrl){
                 if(data.status === 'success') {
                     uICtrl.researchResult(data.response);
                 }
-            }).catch( error => 
-                console.log(error)
-            )
+            }).catch( error => console.log(error));
         }, doneTypingInterval);
+    }
+
+    function getProductInfo(e) {
+        let itemID = '';
+        test = [];
+        if(e.target.parentElement.id !== '') {
+            test = e.target.parentElement.id.match(/^item-id-([\w\d]*)$/);
+            console.log(test);
+            if(test !== null) { 
+                itemID = test[1];
+                dataCtrl.getProductResult(itemID).then(data => {
+                    if(data.status === 'success') {
+                        console.log(data.response);
+                    }
+                }).catch( error => console.log(error));
+            };
+        }
     }
 
     return {
@@ -141,3 +170,5 @@ const appCtrl = (function(dataCtrl, uICtrl){
 })(dataCtrl, uICtrl);
 
 appCtrl.init();
+
+console.log('item-id-51c53de897c3e6efadd5a3a1'.match(/^item-id-([\w\d]*)$/));

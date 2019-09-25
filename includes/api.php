@@ -23,6 +23,16 @@ class nutritionix_api {
     return $this->return_response($response);
   }
 
+  public function search($product_id) {
+    if($product_id == '') return false;
+    $params = array(
+      'nix_item_id' => $product_id
+    );
+    $response = $this->curl_request('/search/item', $params);
+
+    return $this->return_response($response);
+  }
+
   private function return_response($response) {
     if($response != false) {
       return array(
@@ -74,7 +84,12 @@ class nutritionix_api {
 
 $nutritionix_api = new nutritionix_api();
 
-if(isset($_GET['keyword'])) {
-  $response = $nutritionix_api->instant($_GET['keyword']);
+if(isset($_GET['search'])) {
+  $response = $nutritionix_api->instant($_GET['search']);
+  echo json_encode($response);
+}
+
+if(isset($_GET['productID'])){
+  $response = $nutritionix_api->search($_GET['productID']);
   echo json_encode($response);
 }
