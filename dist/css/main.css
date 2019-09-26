@@ -29,6 +29,22 @@ ul {
   max-width: 1500px;
   margin: 0 auto; }
 
+.row {
+  width: 100%; }
+
+.col-6 {
+  width: 50%; }
+
+.col-12 {
+  width: 100%; }
+
+.display-field {
+  margin: 1rem 0.5rem; }
+  .display-field h2 {
+    font-size: 1.5rem; }
+  .display-field p {
+    font-size: 1.1rem; }
+
 #diary-entry {
   margin: 2rem; }
   #diary-entry .heading {
@@ -76,6 +92,18 @@ ul {
             border-color: #26B6E9; }
     #diary-entry .main-content .right-column {
       flex-basis: 65%; }
+      #diary-entry .main-content .right-column .product_info {
+        margin: 1rem; }
+        #diary-entry .main-content .right-column .product_info .general-info {
+          display: flex; }
+          #diary-entry .main-content .right-column .product_info .general-info .product-image {
+            display: flex;
+            justify-content: center;
+            align-items: center; }
+        #diary-entry .main-content .right-column .product_info .ingredient-info {
+          margin: 1rem 1rem; }
+          #diary-entry .main-content .right-column .product_info .ingredient-info .nutrients-list {
+            display: flex; }
       #diary-entry .main-content .right-column .meal-section {
         margin-bottom: 1rem; }
         #diary-entry .main-content .right-column .meal-section h2 {

@@ -30,6 +30,30 @@ ul {
     margin: 0 auto;
 }
 
+.row {
+    width: 100%;
+}
+
+.col-6 {
+    width: 50%;
+}
+
+.col-12 {
+    width: 100%;
+}
+
+.display-field {
+    margin: 1rem 0.5rem;
+
+    h2 {
+       font-size: 1.5rem; 
+    }
+
+    p {
+        font-size: 1.1rem;
+    }
+}
+
 #diary-entry {
     margin: 2rem;
 
@@ -108,6 +132,27 @@ ul {
         
         .right-column {
             flex-basis: 65%;
+
+            .product_info {
+                margin: 1rem;
+
+                .general-info {
+                    display: flex;
+
+                    .product-image {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+
+                .ingredient-info {
+                    margin: 1rem 1rem;
+                    .nutrients-list {
+                        display: flex;
+                    }
+                }
+            }
 
             .meal-section {
                 margin-bottom: 1rem;

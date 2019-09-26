@@ -152,12 +152,12 @@ const appCtrl = (function(dataCtrl, uICtrl){
         test = [];
         if(e.target.parentElement.id !== '') {
             test = e.target.parentElement.id.match(/^item-id-([\w\d]*)$/);
-            console.log(test);
             if(test !== null) { 
                 itemID = test[1];
                 dataCtrl.getProductResult(itemID).then(data => {
                     if(data.status === 'success') {
-                        console.log(data.response);
+                        console.log(data.response.hasOwnProperty('foods'));
+                        if(data.response.hasOwnProperty('foods')) console.log(data.response);
                     }
                 }).catch( error => console.log(error));
             };
