@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="/dist/css/main.css">
+    <link rel="stylesheet" href="/Chart.min.css">
 </head>
 <body>
     <div id="calorie-diary" class="container">
@@ -122,78 +123,82 @@
                                         <div class="label-underline"></div>
                                         <p>Amount Per Serving</p>
                                         <div class="ingredient-specs">
-                                            <div class="calories-spec">
-                                                <span>Calories</span>
-                                                <span>0</span>
-                                            </div>
+                                            <ul class="calories-spec">
+                                                <li class="">
+                                                    <p>Calories</p>
+                                                    <p>0</p>
+                                                </li>
+                                            </ul>
                                             <div class="spec-underline"></div>
                                             <p>% Daily Value*</p>
                                             <ul class="macro-list">
                                                 <li>
-                                                    <span>Total Fat 0g</span>
-                                                    <span>0%</span>
+                                                    <p>Total Fat <span>0g</span></p>
+                                                    <p>0%</p>
                                                 </li>
                                                 <li class="detail-spec">
-                                                    <span>Saturated Fat 0g</span>
-                                                    <span>0%</span>
+                                                    <p>Saturated Fat <span>0g</span></p>
+                                                    <p>0%</p>
                                                 </li>
                                                 <li class="detail-spec">
-                                                    <span>Trans Fat 0g</span>
-                                                    <span>0%</span>
+                                                    <p>Trans Fat <span>0g</span></p>
+                                                    <p>0%</p>
                                                 </li>
                                                 <li>
-                                                    <span>Cholesterol 0mg</span>
-                                                    <span>0%</span>
+                                                    <p>Cholesterol <span>0mg</span></p>
+                                                    <p>0%</p>
                                                 </li>
                                                 <li>
-                                                    <span>Sodium 0mg</span>
-                                                    <span>0%</span>
+                                                    <p>Sodium <span>0mg</span></p>
+                                                    <p>0%</p>
                                                 </li>
                                                 <li>
-                                                    <span>Total Carbonhydrates 0g</span>
-                                                    <span>0%</span>
+                                                    <p>Total Carbonhydrates <span>0g</span></p>
+                                                    <p>0%</p>
                                                 </li>
                                                 <li class="detail-spec">
-                                                    <span>Dietary Fiber 0g</span>
-                                                    <span>0%</span>
+                                                    <p>Dietary Fiber <span>0g</span></p>
+                                                    <p>0%</p>
                                                 </li>
                                                 <li class="detail-spec">
-                                                    <span>Sugar 0g</span>
-                                                    <span>0%</span>
+                                                    <p>Sugar <span>0g</span></p>
+                                                    <p>0%</p>
                                                 </li>
                                                 <li>
-                                                    <span>Protein 0g</span>
-                                                    <span>0%</span>
+                                                    <p>Protein <span>0g</span></p>
+                                                    <p>0%</p>
                                                 </li>
                                             </ul>
                                             <div class="micro-underline"></div>
                                             <ul class="micro-list">
                                                 <li>
-                                                    <span>Vitamin D 0mcg</span>
-                                                    <span>0%</span>
+                                                    <p>Vitamin D 0mcg</p>
+                                                    <p>0%</p>
                                                 </li>
                                                 <li>
-                                                    <span>Calcium 0mg</span>
-                                                    <span>0%</span>
+                                                    <p>Calcium 0mg</p>
+                                                    <p>0%</p>
                                                 </li>
                                                 <li>
-                                                    <span>Iron 0mg</span>
-                                                    <span>0%</span>
+                                                    <p>Iron 0mg</p>
+                                                    <p>0%</p>
                                                 </li>
                                                 <li>
-                                                    <span>Potassium 0mg</span>
-                                                    <span>0%</span>
+                                                    <p>Potassium 0mg</p>
+                                                    <p>0%</p>
                                                 </li>
                                             </ul>
                                             <div class="desc-underline"></div>
-                                            <p>The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2000 calories a day is used for general nutrition advice.</p>
-                                            <p>INGREDIENTS: None</p>
+                                            <div class="extra-info">
+                                                <p>* The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2000 calories a day is used for general nutrition advice.</p>
+                                                <p><span>INGREDIENTS:</span> None</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="ingredient-chart">
-    
+                                            <canvas id="macro-chart" width="400" height="400"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -277,7 +282,29 @@
             </div>
         </div>
     </div>
-
+    <script src="Chart.min.js"></script>
     <script src="main.js"></script>
+
+    <script>
+            const ctx = document.getElementById('macro-chart');
+            data = {
+                datasets: [{
+                    data: [10, 20, 30],
+                    backgroundColor: [
+                        '#E9A84E', '#E55541', '#B9D773'
+                    ]
+                }],
+                labels: [
+                    'Cabonhydrates',
+                    'Protein',
+                    'Fat'
+                ]
+            };
+            const myDoughnutChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {}
+            });
+            </script>
 </body>
 </html>
