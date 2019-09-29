@@ -92,18 +92,36 @@ ul {
             border-color: #26B6E9; }
     #diary-entry .main-content .right-column {
       flex-basis: 65%; }
-      #diary-entry .main-content .right-column .product_info {
+      #diary-entry .main-content .right-column .product-info {
         margin: 1rem; }
-        #diary-entry .main-content .right-column .product_info .general-info {
-          display: flex; }
-          #diary-entry .main-content .right-column .product_info .general-info .product-image {
+        #diary-entry .main-content .right-column .product-info .general-info {
+          display: flex;
+          justify-content: space-around; }
+          #diary-entry .main-content .right-column .product-info .general-info .product-image {
             display: flex;
             justify-content: center;
-            align-items: center; }
-        #diary-entry .main-content .right-column .product_info .ingredient-info {
+            align-items: center;
+            height: 100%; }
+        #diary-entry .main-content .right-column .product-info .nutrients-info {
           margin: 1rem 1rem; }
-          #diary-entry .main-content .right-column .product_info .ingredient-info .nutrients-list {
-            display: flex; }
+          #diary-entry .main-content .right-column .product-info .nutrients-info h2 {
+            text-align: center; }
+          #diary-entry .main-content .right-column .product-info .nutrients-info .nutrients-list {
+            display: flex;
+            justify-content: space-around;
+            margin: 1rem 0rem; }
+            #diary-entry .main-content .right-column .product-info .nutrients-info .nutrients-list ul li {
+              padding-bottom: 0.5rem; }
+        #diary-entry .main-content .right-column .product-info .graphical-info {
+          margin-bottom: 1rem; }
+          #diary-entry .main-content .right-column .product-info .graphical-info .ingredient-label {
+            border: 1px solid #000;
+            padding: 0.4rem; }
+            #diary-entry .main-content .right-column .product-info .graphical-info .ingredient-label p:first-child {
+              font-size: 1.2rem;
+              font-weight: bold; }
+            #diary-entry .main-content .right-column .product-info .graphical-info .ingredient-label p, #diary-entry .main-content .right-column .product-info .graphical-info .ingredient-label span {
+              font-size: 0.8rem; }
       #diary-entry .main-content .right-column .meal-section {
         margin-bottom: 1rem; }
         #diary-entry .main-content .right-column .meal-section h2 {

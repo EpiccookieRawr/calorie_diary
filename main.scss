@@ -133,23 +133,51 @@ ul {
         .right-column {
             flex-basis: 65%;
 
-            .product_info {
+            .product-info {
                 margin: 1rem;
 
                 .general-info {
                     display: flex;
+                    justify-content: space-around;
 
                     .product-image {
                         display: flex;
                         justify-content: center;
                         align-items: center;
+                        height: 100%;
                     }
                 }
 
-                .ingredient-info {
+                .nutrients-info {
+                    h2 {
+                        text-align: center;
+                    }
                     margin: 1rem 1rem;
                     .nutrients-list {
                         display: flex;
+                        justify-content: space-around;
+                        margin: 1rem 0rem;
+
+                        ul li {
+                            padding-bottom: 0.5rem;
+                        }
+                    }
+                }
+
+                .graphical-info {
+                    margin-bottom: 1rem;
+                    .ingredient-label {
+                        border: 1px solid #000;
+                        padding: 0.4rem;
+
+                        p:first-child {
+                            font-size: 1.2rem;
+                            font-weight: bold;
+                        }
+
+                        p, span {
+                            font-size: 0.8rem;
+                        }
                     }
                 }
             }
