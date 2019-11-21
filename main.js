@@ -9,12 +9,40 @@ const dataCtrl = (function(){
         return fetch('/includes/api.php?productID=' + productID)
         .then(res => res.json())
         .then(data => data).catch(error => error);
-    } 
+    }
 
     return {
         getSearchResult,
         getProductResult
     }
+})();
+
+const foodCtrl = (function(){
+    const foodData = {
+        'brandName' : '',
+        'foodName' : '',
+        'image' : '',
+        'servingQty' : 0,
+        'servingUnit' : '',
+        'calories' : 0,
+        'microNutrients' : {
+            'cholesterol' : 0,
+            'dietaryFiber' : 0,
+            'potassium' : 0,
+            'protein': 0,
+            'saturatedFat': 0,
+            'sodium': 0,
+            'sugars': 0,
+            'totalCarbohydrate': 0,
+            'totalFat': 0
+        },
+        'ingredientStatement' : ''
+    };
+
+    return {
+        foodData
+    }
+
 })();
 
 const uICtrl = (function(){
@@ -149,11 +177,11 @@ const appCtrl = (function(dataCtrl, uICtrl){
 
     function getProductInfo(e) {
         let itemID = '';
-        test = [];
+        let findFoodID = [];
         if(e.target.parentElement.id !== '') {
-            test = e.target.parentElement.id.match(/^item-id-([\w\d]*)$/);
-            if(test !== null) { 
-                itemID = test[1];
+            findFoodID = e.target.parentElement.id.match(/^item-id-([\w\d]*)$/);
+            if(findFoodID.length > 0) { 
+                itemID = findFoodID[1];
                 dataCtrl.getProductResult(itemID).then(data => {
                     if(data.status === 'success') {
                         console.log(data.response.hasOwnProperty('foods'));
@@ -167,8 +195,6 @@ const appCtrl = (function(dataCtrl, uICtrl){
     return {
         init
     }
-})(dataCtrl, uICtrl);
+})(dataCtrl, uICtrl, foodCtrl);
 
 appCtrl.init();
-
-console.log('item-id-51c53de897c3e6efadd5a3a1'.match(/^item-id-([\w\d]*)$/));
