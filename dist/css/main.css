@@ -113,7 +113,7 @@ ul {
             #diary-entry .main-content .right-column .product-info .nutrients-info .nutrients-list ul li {
               padding-bottom: 0.5rem; }
         #diary-entry .main-content .right-column .product-info .graphical-info {
-          margin-bottom: 1rem; }
+          margin: 3rem 0rem; }
           #diary-entry .main-content .right-column .product-info .graphical-info .row {
             display: flex;
             justify-content: space-around; }

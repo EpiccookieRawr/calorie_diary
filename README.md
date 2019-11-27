@@ -1,2 +1,2 @@
 # calorie_diary
-An app for tracking calorie intake of the day.
+An app for finding nutritional info for a product. Powered by nutritionix

@@ -17,32 +17,156 @@ const dataCtrl = (function(){
     }
 })();
 
-const foodCtrl = (function(){
+const productDetailCtrl = (function(){
     const foodData = {
-        'brandName' : '',
-        'foodName' : '',
-        'image' : '',
-        'servingQty' : 0,
-        'servingUnit' : '',
-        'calories' : 0,
-        'microNutrients' : {
-            'cholesterol' : 0,
-            'dietaryFiber' : 0,
-            'potassium' : 0,
-            'protein': 0,
-            'saturatedFat': 0,
-            'sodium': 0,
-            'sugars': 0,
-            'totalCarbohydrate': 0,
-            'totalFat': 0
-        },
-        'ingredientStatement' : ''
     };
 
-    return {
-        foodData
+    const uldisplay = function(foodData) {
+        return '<div class="product-info">'+
+            '<div class="general-info row">'+
+                '<div class="col-6">'+
+                    '<div class="col-12 product-image">'+
+                        '<img src="'+foodData.image+'" width="300px" height="300px">'+
+                    '</div>'+
+                '</div>'+
+                '<div class="col-6">'+
+                    '<div class="row">'+
+                        '<div class="col-12">'+
+                            '<div class="display-field">'+
+                                '<h2>Product Name:</h2>'+
+                                '<p>'+foodData.foodName+'</p>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="row">'+
+                        '<div class="col-12">'+
+                            '<div class="display-field">'+
+                                '<h2>Product Brand:</h2>'+
+                                '<p>'+foodData.brandName+'</p>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="row">'+
+                        '<div class="col-12">'+
+                            '<div class="display-field">'+
+                                '<h2>Calories:</h2>'+
+                                '<p>'+foodData.calories+' kcal</p>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="row">'+
+                        '<div class="col-12">'+
+                            '<div class="display-field">'+
+                                '<h2>Serving:</h2>'+
+                                '<p>'+foodData.servingQty+' '+foodData.servingUnit+' ('+foodData.servingWeightGrams+' grams)</p>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="row">'+
+                        '<div class="col-12">'+
+                            '<div class="display-field">'+
+                                '<h2>Updated at:</h2>'+
+                                '<p>2019-04-27T07:27:56+00:00</p>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'+
+            '<div class="graphical-info">'+
+                '<div class="row">'+
+                    '<div class="col-6">'+
+                        '<div class="ingredient-label">'+
+                            '<h3>Nutrition Facts</h3>'+
+                            '<p>Serving Size: '+foodData.servingQty+' '+foodData.servingUnit+'</p>'+
+                            '<div class="label-underline"></div>'+
+                            '<p>Amount Per Serving</p>'+
+                            '<div class="ingredient-specs">'+
+                                '<ul class="calories-spec">'+
+                                    '<li>'+
+                                        '<p>Calories</p>'+
+                                        '<p>'+foodData.calories+' kcal</p>'+
+                                    '</li>'+
+                                '</ul>'+
+                                '<div class="spec-underline"></div>'+
+                                '<p>% Daily Value*</p>'+
+                                '<ul class="macro-list">'+
+                                    '<li>'+
+                                        '<p>Total Fat <span>'+foodData.microNutrients.totalFat+' g</span></p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                    '<li class="detail-spec">'+
+                                        '<p>Saturated Fat <span>'+foodData.microNutrients.saturatedFat+' g</span></p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                    '<li class="detail-spec">'+
+                                        '<p>Trans Fat <span>'+foodData.microNutrients.saturatedFat+' g</span></p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                    '<li>'+
+                                        '<p>Cholesterol <span>'+foodData.microNutrients.cholesterol+' mg</span></p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                    '<li>'+
+                                        '<p>Sodium <span>'+foodData.microNutrients.sodium+' mg</span></p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                    '<li>'+
+                                        '<p>Total Carbonhydrates <span>'+foodData.microNutrients.totalCarbohydrate+' g</span></p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                    '<li class="detail-spec">'+
+                                        '<p>Dietary Fiber <span>'+foodData.microNutrients.dietaryFiber+' g</span></p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                    '<li class="detail-spec">'+
+                                        '<p>Sugar <span>'+foodData.microNutrients.sugars+' g</span></p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                    '<li>'+
+                                        '<p>Protein <span>'+foodData.microNutrients.protein+' g</span></p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                '</ul>'+
+                                '<div class="micro-underline"></div>'+
+                                '<ul class="micro-list">'+
+                                    '<li>'+
+                                        '<p>Vitamin D 0mcg</p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                    '<li>'+
+                                        '<p>Calcium 0mg</p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                    '<li>'+
+                                        '<p>Iron 0mg</p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                    '<li>'+
+                                        '<p>Potassium 0mg</p>'+
+                                        '<p>0%</p>'+
+                                    '</li>'+
+                                '</ul>'+
+                                '<div class="desc-underline"></div>'+
+                                '<div class="extra-info">'+
+                                    '<p>* The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. 2000 calories a day is used for general nutrition advice.</p>'+
+                                    '<p><span>INGREDIENTS:</span> '+foodData.ingredientStatement+'</p>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="col-6">'+
+                        '<div class="ingredient-chart">'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+            '</div>'+
+        '</div>';
     }
-
+    // '<canvas id="macro-chart" width="400" height="400"></canvas>'
+    return {
+        foodData,
+        uldisplay
+    }
 })();
 
 const uICtrl = (function(){
@@ -51,6 +175,7 @@ const uICtrl = (function(){
         'searchResults' : '.search-results',
         'resultsItems' : '.results-items',
         'resultDetails' : '.result-details',
+        'rightColumn' : '.right-column'
     }
 
     const researchResult = function(data) {
@@ -139,7 +264,7 @@ const uICtrl = (function(){
     }
 })();
 
-const appCtrl = (function(dataCtrl, uICtrl){
+const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl){
     let typingTimer;
     const doneTypingInterval = 500;
     const uISelector = uICtrl.uISelector;
@@ -184,8 +309,33 @@ const appCtrl = (function(dataCtrl, uICtrl){
                 itemID = findFoodID[1];
                 dataCtrl.getProductResult(itemID).then(data => {
                     if(data.status === 'success') {
-                        console.log(data.response.hasOwnProperty('foods'));
-                        if(data.response.hasOwnProperty('foods')) console.log(data.response);
+                        if(data.response.hasOwnProperty('foods')) {
+                            const foodDetail = data.response.foods[0];
+                            console.log(foodDetail);
+                            productDetailCtrl.foodData = {
+                                'brandName' : foodDetail.brand_name,
+                                'foodName' : foodDetail.food_name,
+                                'image' : foodDetail.photo.thumb,
+                                'servingQty' : foodDetail.serving_qty,
+                                'servingUnit' : foodDetail.serving_unit,
+                                'calories' : foodDetail.nf_calories,
+                                'servingWeightGrams' : foodDetail.serving_weight_grams,
+                                'microNutrients' : {
+                                    'cholesterol' : foodDetail.nf_cholesterol,
+                                    'dietaryFiber' : foodDetail.nf_dietary_fiber,
+                                    'potassium' : foodDetail.nf_potassium,
+                                    'protein': foodDetail.nf_protein,
+                                    'saturatedFat': foodDetail.nf_saturated_fat,
+                                    'sodium': foodDetail.nf_sodium,
+                                    'sugars': foodDetail.nf_sugars,
+                                    'totalCarbohydrate': foodDetail.nf_total_carbohydrate,
+                                    'totalFat': foodDetail.nf_total_fat
+                                },
+                                'ingredientStatement' : foodDetail.nf_ingredient_statement
+                            }
+                            console.log(productDetailCtrl.foodData);
+                            document.querySelector(uISelector.rightColumn).innerHTML = productDetailCtrl.uldisplay(productDetailCtrl.foodData);
+                        }
                     }
                 }).catch( error => console.log(error));
             };
@@ -195,6 +345,6 @@ const appCtrl = (function(dataCtrl, uICtrl){
     return {
         init
     }
-})(dataCtrl, uICtrl, foodCtrl);
+})(dataCtrl, uICtrl, productDetailCtrl);
 
 appCtrl.init();
