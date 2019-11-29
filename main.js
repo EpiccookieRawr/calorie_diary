@@ -21,6 +21,19 @@ const productDetailCtrl = (function(){
     const foodData = {
     };
 
+    const DVInfo = {
+        'totalFat' : 65,
+        'saturatedFat' : 20,
+        'cholesterol' : 300,
+        'sodium' : 2400,
+        'totalCarbohydrate' : 300,
+        'dietaryFiber' : 25,
+        'vitaminA' : 1000,
+        'vitaminC' : 60,
+        'calcium' : 1100,
+        'iron' : 14
+    }
+
     const uldisplay = function(foodData) {
         return '<div class="product-info">'+
             '<div class="general-info row">'+
@@ -58,7 +71,7 @@ const productDetailCtrl = (function(){
                         '<div class="col-12">'+
                             '<div class="display-field">'+
                                 '<h2>Serving:</h2>'+
-                                '<p>'+foodData.servingQty+' '+foodData.servingUnit+' ('+foodData.servingWeightGrams+' grams)</p>'+
+                                '<p>'+foodData.servingQty+' '+foodData.servingUnit + (foodData.servingWeightGrams === null ? '' : '('+foodData.servingWeightGrams+' grams)') + '</p>'+
                             '</div>'+
                         '</div>'+
                     '</div>'+
@@ -66,7 +79,7 @@ const productDetailCtrl = (function(){
                         '<div class="col-12">'+
                             '<div class="display-field">'+
                                 '<h2>Updated at:</h2>'+
-                                '<p>2019-04-27T07:27:56+00:00</p>'+
+                                '<p>'+(foodData.updatedAt === undefined ? 'N/A' : foodData.updatedAt)+'</p>'+
                             '</div>'+
                         '</div>'+
                     '</div>'+
@@ -92,7 +105,7 @@ const productDetailCtrl = (function(){
                                 '<ul class="macro-list">'+
                                     '<li>'+
                                         '<p>Total Fat <span>'+foodData.microNutrients.totalFat+' g</span></p>'+
-                                        '<p>0%</p>'+
+                                        '<p>'+foodData.microNutrients.totalFat+'</p>'+
                                     '</li>'+
                                     '<li class="detail-spec">'+
                                         '<p>Saturated Fat <span>'+foodData.microNutrients.saturatedFat+' g</span></p>'+
@@ -156,13 +169,13 @@ const productDetailCtrl = (function(){
                     '</div>'+
                     '<div class="col-6">'+
                         '<div class="ingredient-chart">'+
+                            '<canvas id="macro-chart" width="400" height="400"></canvas>'+
                         '</div>'+
                     '</div>'+
                 '</div>'+
             '</div>'+
         '</div>';
     }
-    // '<canvas id="macro-chart" width="400" height="400"></canvas>'
     return {
         foodData,
         uldisplay
@@ -210,7 +223,7 @@ const uICtrl = (function(){
                     const li = document.createElement('li');
                     li.id = `item-id-${currentBrand.nix_item_id}`;
                     li.className = "item-list";
-                    li.innerHTML = `<p>${currentBrand.food_name}</p><p>${currentBrand.brand_name}</p><p>${currentBrand.nf_calories} calories</p>`;
+                    li.innerHTML = `<p>${currentBrand.food_name}</p><p>${currentBrand.brand_name}</p><p>${Math.ceil(currentBrand.nf_calories)} calories</p>`;
                     ul.appendChild(li);
                 });
                 resultsDiv.appendChild(ul);
@@ -318,23 +331,46 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl){
                                 'image' : foodDetail.photo.thumb,
                                 'servingQty' : foodDetail.serving_qty,
                                 'servingUnit' : foodDetail.serving_unit,
-                                'calories' : foodDetail.nf_calories,
+                                'calories' : Math.ceil(foodDetail.nf_calories),
                                 'servingWeightGrams' : foodDetail.serving_weight_grams,
                                 'microNutrients' : {
-                                    'cholesterol' : foodDetail.nf_cholesterol,
-                                    'dietaryFiber' : foodDetail.nf_dietary_fiber,
-                                    'potassium' : foodDetail.nf_potassium,
-                                    'protein': foodDetail.nf_protein,
-                                    'saturatedFat': foodDetail.nf_saturated_fat,
-                                    'sodium': foodDetail.nf_sodium,
-                                    'sugars': foodDetail.nf_sugars,
-                                    'totalCarbohydrate': foodDetail.nf_total_carbohydrate,
-                                    'totalFat': foodDetail.nf_total_fat
+                                    'cholesterol' : Math.ceil(foodDetail.nf_cholesterol),
+                                    'dietaryFiber' : (foodDetail.nf_dietary_fiber === null ? 0 : foodDetail.nf_dietary_fiber.toFixed(1)),
+                                    'potassium' : Math.ceil(foodDetail.nf_potassium),
+                                    'protein': (foodDetail.nf_protein === null ? 0 : foodDetail.nf_protein.toFixed(1)),
+                                    'saturatedFat': (foodDetail.nf_saturated_fat === null ? 0 : foodDetail.nf_saturated_fat.toFixed(1)),
+                                    'sodium': Math.ceil(foodDetail.nf_sodium),
+                                    'sugars': (foodDetail.nf_sugars === null ? 0 : foodDetail.nf_sugars.toFixed(1)),
+                                    'totalCarbohydrate': (foodDetail.nf_total_carbohydrate === null ? 0 : foodDetail.nf_total_carbohydrate.toFixed(1)),
+                                    'totalFat': (foodDetail.nf_total_fat === null ? 0 : foodDetail.nf_total_fat.toFixed(1))
                                 },
-                                'ingredientStatement' : foodDetail.nf_ingredient_statement
+                                'ingredientStatement' : (foodDetail.nf_ingredient_statement === null ? 'none' : foodDetail.nf_ingredient_statement)
+                            }
+                            if(foodDetail.hasOwnProperty('updated_at')) {
+                                const formattedDate = new Date(foodDetail.updated_at);
+                                productDetailCtrl.foodData['updatedAt'] = formattedDate.toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                             }
                             console.log(productDetailCtrl.foodData);
                             document.querySelector(uISelector.rightColumn).innerHTML = productDetailCtrl.uldisplay(productDetailCtrl.foodData);
+                            const ctx = document.getElementById('macro-chart');
+                            const graphData = {
+                                datasets: [{
+                                    data: [productDetailCtrl.foodData.microNutrients.totalCarbohydrate, productDetailCtrl.foodData.microNutrients.protein, productDetailCtrl.foodData.microNutrients.totalFat],
+                                    backgroundColor: [
+                                        '#E9A84E', '#E55541', '#B9D773'
+                                    ]
+                                }],
+                                labels: [
+                                    'Cabonhydrates',
+                                    'Protein',
+                                    'Fat'
+                                ]
+                            };
+                            const myDoughnutChart = new Chart(ctx, {
+                                type: 'doughnut',
+                                data: graphData,
+                                options: {}
+                            });
                         }
                     }
                 }).catch( error => console.log(error));
