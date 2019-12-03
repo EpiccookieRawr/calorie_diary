@@ -104,6 +104,10 @@ ul {
                         margin: 1rem 0rem;
                         display: none;
 
+                        .item-list {
+                            cursor: pointer;
+                        }
+
                         p:first-child {
                             font-weight: bold;
                         }

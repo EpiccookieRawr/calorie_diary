@@ -77,6 +77,8 @@ ul {
         #diary-entry .main-content .left-column .search-results .result-details .results-items {
           margin: 1rem 0rem;
           display: none; }
+          #diary-entry .main-content .left-column .search-results .result-details .results-items .item-list {
+            cursor: pointer; }
           #diary-entry .main-content .left-column .search-results .result-details .results-items p:first-child {
             font-weight: bold; }
       #diary-entry .main-content .left-column .recent-added {
