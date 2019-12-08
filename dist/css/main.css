@@ -63,8 +63,10 @@ ul {
         margin-bottom: 1rem; }
       #diary-entry .main-content .left-column .search-results, #diary-entry .main-content .left-column .recent-added {
         margin-bottom: 2rem; }
-        #diary-entry .main-content .left-column .search-results ul li, #diary-entry .main-content .left-column .recent-added ul li {
-          margin-bottom: 0.5rem; }
+        #diary-entry .main-content .left-column .search-results ol li, #diary-entry .main-content .left-column .recent-added ol li {
+          margin-bottom: 0.5rem;
+          margin-left: 0.5rem;
+          cursor: pointer; }
       #diary-entry .main-content .left-column .search-results {
         height: 450px; }
         #diary-entry .main-content .left-column .search-results .pagination {

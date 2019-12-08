@@ -17,6 +17,67 @@ const dataCtrl = (function(){
     }
 })();
 
+const cacheCtrl = (function(){
+    const localStorageNames = {
+        'recentSearch' : 'recentResults',
+        'searchedResults' : 'searchResults',
+    };
+
+    const saveFoodResults = function(foodID, data){
+        savelocalResultsHandler(localStorageNames.recentSearch, foodID, data);
+    };
+
+    const fetchFoodResults = function() {
+        return fetchResultsHandler(localStorageNames.recentSearch);
+    };
+
+    const saveSearchResults = function(keyword, data) {
+        savelocalResultsHandler(localStorageNames.searchedResults, keyword, data);
+    };
+
+    const fetchSearchResults = function() {
+        return fetchResultsHandler(localStorageNames.searchedResults);
+    };
+
+    const savelocalResultsHandler = function(localStorageName, id, data) {
+        let items = {};
+        const lastEntryName = 'Last'+localStorageName;
+        const lastEntry = localStorage.getItem(lastEntryName);
+        localStorage.getItem
+        if(localStorage.getItem(localStorageName) === null){
+            items[id] = data;
+            localStorage.setItem(localStorageName, JSON.stringify(items));    
+        } else {
+            items = JSON.parse(localStorage.getItem(localStorageName));
+            if(Object.keys(items).length > 9) {
+                if(lastEntry !== null) {
+                    delete items[lastEntry];
+                }
+            }
+            items[id] = data;
+            localStorage.setItem(localStorageName, JSON.stringify(items));
+        }
+        localStorage.setItem(lastEntryName, id);
+    }
+
+    const fetchResultsHandler = function(localStorageName) {
+        let items;
+        if(localStorage.getItem(localStorageName) === null){
+            items = {};
+        } else {
+            items = JSON.parse(localStorage.getItem(localStorageName));
+        }
+        return items;
+    }
+
+    return {
+        saveFoodResults,
+        fetchFoodResults,
+        saveSearchResults,
+        fetchSearchResults
+    }
+})();
+
 const productDetailCtrl = (function(){
     const foodData = {
     };
@@ -207,9 +268,8 @@ const productDetailCtrl = (function(){
                 datasets: [datasetsData],
                 labels: graphLabels
             };
-            console.log(graphData);
             const myDoughnutChart = new Chart(ctx, {
-                type: 'doughnut',
+                type: 'polarArea',
                 data: graphData,
             });
         } else {
@@ -223,13 +283,14 @@ const productDetailCtrl = (function(){
     }
 })();
 
-const uICtrl = (function(){
+const uICtrl = (function(cacheCtrl){
     const uISelector = {
         'newItem' : '#new-item',
         'searchResults' : '.search-results',
         'resultsItems' : '.results-items',
         'resultDetails' : '.result-details',
-        'rightColumn' : '.right-column'
+        'rightColumn' : '.right-column',
+        'recentSelection' : '.recent-items'
     }
 
     const researchResult = function(data) {
@@ -311,19 +372,47 @@ const uICtrl = (function(){
         }
     }
 
+    const showRecentSelections = function() {
+        const recentItemDiv = document.querySelector('.recent-items');
+        const recentSelections = cacheCtrl.fetchFoodResults();
+        const recentSelectionsLength = Object.keys(recentSelections).length;
+        clearRecentSelections();
+        if(recentSelectionsLength > 0) {
+            for(let selection in recentSelections) {
+                const selectionList = document.createElement('li');
+                selectionList.id = 'recent-id-' + selection;
+                selectionList.innerText = recentSelections[selection].food_name;
+                recentItemDiv.appendChild(selectionList);
+            }
+        } else {
+            const selectionList = document.createElement('span');
+            selectionList.innerText = 'No recent search available';
+            recentItemDiv.appendChild(selectionList);
+        }
+    }
+
+    function clearRecentSelections() {
+        const recentItemDiv = document.querySelector('.recent-items');
+        while(recentItemDiv.firstElementChild) {
+            recentItemDiv.firstElementChild.remove();
+        }
+    }
+
     return {
         uISelector,
         researchResult,
-        showPage
+        showPage,
+        showRecentSelections
     }
-})();
+})(cacheCtrl);
 
-const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl){
+const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl, cacheCtrl){
     let typingTimer;
     const doneTypingInterval = 500;
     const uISelector = uICtrl.uISelector;
 
     const init = function() {
+        uICtrl.showRecentSelections();
         loadEventListener();
         console.log('App is initialized...');
     }
@@ -332,6 +421,7 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl){
         document.querySelector(uISelector.newItem).addEventListener('keyup', searchKeyword);
         document.querySelector(uISelector.resultDetails).addEventListener('click', eventsSearch);
         document.querySelector(uISelector.resultDetails).addEventListener('click', getProductInfo);
+        document.querySelector(uISelector.recentSelection).addEventListener('click', displayRecentSelection);
     }
 
     function eventsSearch(e) {
@@ -346,12 +436,59 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl){
     function searchKeyword(e) {
         clearTimeout(typingTimer);
         if(e.target.value) typingTimer = setTimeout(function() {
-            dataCtrl.getSearchResult(e.target.value).then( data => {
-                if(data.status === 'success') {
-                    uICtrl.researchResult(data.response);
-                }
-            }).catch( error => console.log(error));
+            const recentSearchResults = cacheCtrl.fetchSearchResults();
+            if(recentSearchResults[e.target.value] !== undefined) {
+                console.log('from cache');
+                uICtrl.researchResult(recentSearchResults[e.target.value]);
+            } else {
+                dataCtrl.getSearchResult(e.target.value).then( data => {
+                    if(data.status === 'success') {
+                        cacheCtrl.saveSearchResults(e.target.value, data.response);
+                        uICtrl.researchResult(data.response);
+                    }
+                }).catch( error => console.log(error));
+            }
         }, doneTypingInterval);
+    }
+
+    function displayRecentSelection(e) {
+        let itemID = '';
+        if(e.target.tagName === 'LI') {
+            const findFoodID = e.target.id.match(/^recent-id-([\w\d]*)$/);
+            const recentSelections = cacheCtrl.fetchFoodResults();
+            if(findFoodID.length > 0) {
+                itemID = findFoodID[1];
+                const foodDetail = recentSelections[itemID];
+                productDetailCtrl.foodData = {
+                    'brandName' : foodDetail.brand_name,
+                    'foodName' : foodDetail.food_name,
+                    'image' : foodDetail.photo.thumb,
+                    'servingQty' : foodDetail.serving_qty,
+                    'servingUnit' : foodDetail.serving_unit,
+                    'calories' : Math.ceil(foodDetail.nf_calories),
+                    'servingWeightGrams' : foodDetail.serving_weight_grams,
+                    'microNutrients' : {
+                        'cholesterol' : Math.ceil(foodDetail.nf_cholesterol),
+                        'dietaryFiber' : (foodDetail.nf_dietary_fiber === null ? 0 : foodDetail.nf_dietary_fiber.toFixed(1)),
+                        'potassium' : Math.ceil(foodDetail.nf_potassium),
+                        'protein': (foodDetail.nf_protein === null ? 0 : foodDetail.nf_protein.toFixed(1)),
+                        'saturatedFat': (foodDetail.nf_saturated_fat === null ? 0 : foodDetail.nf_saturated_fat.toFixed(1)),
+                        'sodium': Math.ceil(foodDetail.nf_sodium),
+                        'sugars': (foodDetail.nf_sugars === null ? 0 : foodDetail.nf_sugars.toFixed(1)),
+                        'totalCarbohydrate': (foodDetail.nf_total_carbohydrate === null ? 0 : foodDetail.nf_total_carbohydrate.toFixed(1)),
+                        'totalFat': (foodDetail.nf_total_fat === null ? 0 : foodDetail.nf_total_fat.toFixed(1))
+                    },
+                    'ingredientStatement' : (foodDetail.nf_ingredient_statement === null ? 'none' : foodDetail.nf_ingredient_statement)
+                }
+                if(foodDetail.hasOwnProperty('updated_at')) {
+                    const formattedDate = new Date(foodDetail.updated_at);
+                    productDetailCtrl.foodData['updatedAt'] = formattedDate.toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                };
+
+                document.querySelector(uISelector.rightColumn).innerHTML = productDetailCtrl.uldisplay(productDetailCtrl.foodData);
+                productDetailCtrl.intializeChart(productDetailCtrl.foodData);
+            }
+        }
     }
 
     function getProductInfo(e) {
@@ -365,7 +502,7 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl){
                     if(data.status === 'success') {
                         if(data.response.hasOwnProperty('foods')) {
                             const foodDetail = data.response.foods[0];
-                            console.log(foodDetail);
+                            cacheCtrl.saveFoodResults(itemID, foodDetail);
                             productDetailCtrl.foodData = {
                                 'brandName' : foodDetail.brand_name,
                                 'foodName' : foodDetail.food_name,
@@ -394,6 +531,7 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl){
 
                             document.querySelector(uISelector.rightColumn).innerHTML = productDetailCtrl.uldisplay(productDetailCtrl.foodData);
                             productDetailCtrl.intializeChart(productDetailCtrl.foodData);
+                            uICtrl.showRecentSelections();
                         }
                     }
                 }).catch( error => console.log(error));
@@ -404,6 +542,6 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl){
     return {
         init
     }
-})(dataCtrl, uICtrl, productDetailCtrl);
+})(dataCtrl, uICtrl, productDetailCtrl, cacheCtrl);
 
 appCtrl.init();
