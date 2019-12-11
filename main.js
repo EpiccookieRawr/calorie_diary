@@ -1,22 +1,3 @@
-const dataCtrl = (function(){
-    const getSearchResult = function(keyword) {
-        return fetch('/includes/api.php?search=' + keyword)
-        .then(res => res.json())
-        .then(data => data).catch(error => error);
-    }
-
-    const getProductResult = function(productID) {
-        return fetch('/includes/api.php?productID=' + productID)
-        .then(res => res.json())
-        .then(data => data).catch(error => error);
-    }
-
-    return {
-        getSearchResult,
-        getProductResult
-    }
-})();
-
 const cacheCtrl = (function(){
     const localStorageNames = {
         'recentSearch' : 'recentResults',
@@ -43,15 +24,20 @@ const cacheCtrl = (function(){
         let items = {};
         const lastEntryName = 'Last'+localStorageName;
         const lastEntry = localStorage.getItem(lastEntryName);
-        localStorage.getItem
+
         if(localStorage.getItem(localStorageName) === null){
             items[id] = data;
             localStorage.setItem(localStorageName, JSON.stringify(items));    
         } else {
             items = JSON.parse(localStorage.getItem(localStorageName));
-            if(Object.keys(items).length > 9) {
+            const savedResultsKey = Object.keys(items);
+            let i = 0;
+            while(savedResultsKey[i] !== lastEntry) {
+                i++;
+            }
+            if(savedResultsKey.length >= 8) {
                 if(lastEntry !== null) {
-                    delete items[lastEntry];
+                    delete items[savedResultsKey[i]];
                 }
             }
             items[id] = data;
@@ -77,6 +63,47 @@ const cacheCtrl = (function(){
         fetchSearchResults
     }
 })();
+
+const dataCtrl = (function(cacheCtrl){
+    const getSearchResult = function(keyword) {
+        const cachedSearchResult = cacheCtrl.fetchSearchResults();
+        if(cachedSearchResult[keyword] !== undefined) {
+            console.log('from cache');
+            return new Promise((resolve,reject) => {
+                resolve({
+                    status : 'success',
+                    response : cachedSearchResult[keyword]
+                });
+            });
+        } else {
+            return fetch('/includes/api.php?search=' + keyword)
+            .then(res => res.json())
+            .then(data => data).catch(error => error);
+        }
+    }
+
+    const getProductResult = function(productID) {
+        const cachedFoodResult = cacheCtrl.fetchFoodResults();
+        if(cachedFoodResult[productID] !== undefined) {
+            console.log('from cache');
+            return new Promise((resolve,reject) => {
+                resolve({
+                    status : 'success',
+                    response : cachedFoodResult[productID]
+                });
+            });
+        } else {
+            return fetch('/includes/api.php?productID=' + productID)
+            .then(res => res.json())
+            .then(data => data).catch(error => error);
+        }
+    }
+
+    return {
+        getSearchResult,
+        getProductResult
+    }
+})(cacheCtrl);
 
 const productDetailCtrl = (function(){
     const foodData = {
@@ -233,6 +260,7 @@ const productDetailCtrl = (function(){
                     '</div>'+
                     '<div class="col-6">'+
                         '<div class="ingredient-chart">'+
+                            '<h3>Macro Nutrients Chart</h3>'+
                             '<canvas id="macro-chart" width="400" height="400"></canvas>'+
                         '</div>'+
                     '</div>'+
@@ -273,7 +301,11 @@ const productDetailCtrl = (function(){
                 data: graphData,
             });
         } else {
-            console.log('unapplicable');
+            const draw = ctx.getContext('2d');
+            draw.textBaseline = 'middle';
+            draw.textAlign = "center";
+            draw.font = "20px Arial";
+            draw.fillText("Macro Nutrient Graph is not available", 200, 200);
         }
     }
     return {
@@ -398,11 +430,19 @@ const uICtrl = (function(cacheCtrl){
         }
     }
 
+    const loadingSpinner = function() {
+        const loadingDiv = document.createElement('div');
+        loadingDiv.classList.add('lds-dual-ring');
+        loadingDiv.classList.add('overlay');
+        return loadingDiv;
+    }
+
     return {
         uISelector,
         researchResult,
         showPage,
-        showRecentSelections
+        showRecentSelections,
+        loadingSpinner
     }
 })(cacheCtrl);
 
@@ -435,19 +475,17 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl, cacheCtrl){
 
     function searchKeyword(e) {
         clearTimeout(typingTimer);
+        if(document.querySelector(uISelector.searchResults + ' .lds-dual-ring') === null) {
+            document.querySelector(uISelector.searchResults).appendChild(uICtrl.loadingSpinner());
+        }
         if(e.target.value) typingTimer = setTimeout(function() {
-            const recentSearchResults = cacheCtrl.fetchSearchResults();
-            if(recentSearchResults[e.target.value] !== undefined) {
-                console.log('from cache');
-                uICtrl.researchResult(recentSearchResults[e.target.value]);
-            } else {
-                dataCtrl.getSearchResult(e.target.value).then( data => {
-                    if(data.status === 'success') {
-                        cacheCtrl.saveSearchResults(e.target.value, data.response);
-                        uICtrl.researchResult(data.response);
-                    }
-                }).catch( error => console.log(error));
-            }
+            dataCtrl.getSearchResult(e.target.value).then( data => {
+                if(data.status === 'success') {
+                    cacheCtrl.saveSearchResults(e.target.value, data.response);
+                    uICtrl.researchResult(data.response);
+                }
+                document.querySelector(uISelector.searchResults + ' .lds-dual-ring').remove();
+            }).catch( error => console.log(error));
         }, doneTypingInterval);
     }
 
@@ -459,32 +497,7 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl, cacheCtrl){
             if(findFoodID.length > 0) {
                 itemID = findFoodID[1];
                 const foodDetail = recentSelections[itemID];
-                productDetailCtrl.foodData = {
-                    'brandName' : foodDetail.brand_name,
-                    'foodName' : foodDetail.food_name,
-                    'image' : foodDetail.photo.thumb,
-                    'servingQty' : foodDetail.serving_qty,
-                    'servingUnit' : foodDetail.serving_unit,
-                    'calories' : Math.ceil(foodDetail.nf_calories),
-                    'servingWeightGrams' : foodDetail.serving_weight_grams,
-                    'microNutrients' : {
-                        'cholesterol' : Math.ceil(foodDetail.nf_cholesterol),
-                        'dietaryFiber' : (foodDetail.nf_dietary_fiber === null ? 0 : foodDetail.nf_dietary_fiber.toFixed(1)),
-                        'potassium' : Math.ceil(foodDetail.nf_potassium),
-                        'protein': (foodDetail.nf_protein === null ? 0 : foodDetail.nf_protein.toFixed(1)),
-                        'saturatedFat': (foodDetail.nf_saturated_fat === null ? 0 : foodDetail.nf_saturated_fat.toFixed(1)),
-                        'sodium': Math.ceil(foodDetail.nf_sodium),
-                        'sugars': (foodDetail.nf_sugars === null ? 0 : foodDetail.nf_sugars.toFixed(1)),
-                        'totalCarbohydrate': (foodDetail.nf_total_carbohydrate === null ? 0 : foodDetail.nf_total_carbohydrate.toFixed(1)),
-                        'totalFat': (foodDetail.nf_total_fat === null ? 0 : foodDetail.nf_total_fat.toFixed(1))
-                    },
-                    'ingredientStatement' : (foodDetail.nf_ingredient_statement === null ? 'none' : foodDetail.nf_ingredient_statement)
-                }
-                if(foodDetail.hasOwnProperty('updated_at')) {
-                    const formattedDate = new Date(foodDetail.updated_at);
-                    productDetailCtrl.foodData['updatedAt'] = formattedDate.toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                };
-
+                productInfoHandler(foodDetail);
                 document.querySelector(uISelector.rightColumn).innerHTML = productDetailCtrl.uldisplay(productDetailCtrl.foodData);
                 productDetailCtrl.intializeChart(productDetailCtrl.foodData);
             }
@@ -495,6 +508,9 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl, cacheCtrl){
         let itemID = '';
         let findFoodID = [];
         if(e.target.parentElement.id !== '') {
+            if(document.querySelector(uISelector.rightColumn + ' .lds-dual-ring') === null) {
+                document.querySelector(uISelector.rightColumn).appendChild(uICtrl.loadingSpinner());
+            }
             findFoodID = e.target.parentElement.id.match(/^item-id-([\w\d]*)$/);
             if(findFoodID.length > 0) { 
                 itemID = findFoodID[1];
@@ -503,40 +519,44 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl, cacheCtrl){
                         if(data.response.hasOwnProperty('foods')) {
                             const foodDetail = data.response.foods[0];
                             cacheCtrl.saveFoodResults(itemID, foodDetail);
-                            productDetailCtrl.foodData = {
-                                'brandName' : foodDetail.brand_name,
-                                'foodName' : foodDetail.food_name,
-                                'image' : foodDetail.photo.thumb,
-                                'servingQty' : foodDetail.serving_qty,
-                                'servingUnit' : foodDetail.serving_unit,
-                                'calories' : Math.ceil(foodDetail.nf_calories),
-                                'servingWeightGrams' : foodDetail.serving_weight_grams,
-                                'microNutrients' : {
-                                    'cholesterol' : Math.ceil(foodDetail.nf_cholesterol),
-                                    'dietaryFiber' : (foodDetail.nf_dietary_fiber === null ? 0 : foodDetail.nf_dietary_fiber.toFixed(1)),
-                                    'potassium' : Math.ceil(foodDetail.nf_potassium),
-                                    'protein': (foodDetail.nf_protein === null ? 0 : foodDetail.nf_protein.toFixed(1)),
-                                    'saturatedFat': (foodDetail.nf_saturated_fat === null ? 0 : foodDetail.nf_saturated_fat.toFixed(1)),
-                                    'sodium': Math.ceil(foodDetail.nf_sodium),
-                                    'sugars': (foodDetail.nf_sugars === null ? 0 : foodDetail.nf_sugars.toFixed(1)),
-                                    'totalCarbohydrate': (foodDetail.nf_total_carbohydrate === null ? 0 : foodDetail.nf_total_carbohydrate.toFixed(1)),
-                                    'totalFat': (foodDetail.nf_total_fat === null ? 0 : foodDetail.nf_total_fat.toFixed(1))
-                                },
-                                'ingredientStatement' : (foodDetail.nf_ingredient_statement === null ? 'none' : foodDetail.nf_ingredient_statement)
-                            }
-                            if(foodDetail.hasOwnProperty('updated_at')) {
-                                const formattedDate = new Date(foodDetail.updated_at);
-                                productDetailCtrl.foodData['updatedAt'] = formattedDate.toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                            };
-
+                            productInfoHandler(foodDetail);
                             document.querySelector(uISelector.rightColumn).innerHTML = productDetailCtrl.uldisplay(productDetailCtrl.foodData);
                             productDetailCtrl.intializeChart(productDetailCtrl.foodData);
                             uICtrl.showRecentSelections();
                         }
                     }
+                    document.querySelector(uISelector.rightColumn + ' .lds-dual-ring').remove();
                 }).catch( error => console.log(error));
             };
         }
+    }
+
+    function productInfoHandler(foodDetail) {
+        productDetailCtrl.foodData = {
+            'brandName' : foodDetail.brand_name,
+            'foodName' : foodDetail.food_name,
+            'image' : foodDetail.photo.thumb,
+            'servingQty' : foodDetail.serving_qty,
+            'servingUnit' : foodDetail.serving_unit,
+            'calories' : Math.ceil(foodDetail.nf_calories),
+            'servingWeightGrams' : foodDetail.serving_weight_grams,
+            'microNutrients' : {
+                'cholesterol' : Math.ceil(foodDetail.nf_cholesterol),
+                'dietaryFiber' : (foodDetail.nf_dietary_fiber === null ? 0 : foodDetail.nf_dietary_fiber.toFixed(1)),
+                'potassium' : Math.ceil(foodDetail.nf_potassium),
+                'protein': (foodDetail.nf_protein === null ? 0 : foodDetail.nf_protein.toFixed(1)),
+                'saturatedFat': (foodDetail.nf_saturated_fat === null ? 0 : foodDetail.nf_saturated_fat.toFixed(1)),
+                'sodium': Math.ceil(foodDetail.nf_sodium),
+                'sugars': (foodDetail.nf_sugars === null ? 0 : foodDetail.nf_sugars.toFixed(1)),
+                'totalCarbohydrate': (foodDetail.nf_total_carbohydrate === null ? 0 : foodDetail.nf_total_carbohydrate.toFixed(1)),
+                'totalFat': (foodDetail.nf_total_fat === null ? 0 : foodDetail.nf_total_fat.toFixed(1))
+            },
+            'ingredientStatement' : (foodDetail.nf_ingredient_statement === null ? 'none' : foodDetail.nf_ingredient_statement)
+        }
+        if(foodDetail.hasOwnProperty('updated_at')) {
+            const formattedDate = new Date(foodDetail.updated_at);
+            productDetailCtrl.foodData['updatedAt'] = formattedDate.toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        };
     }
 
     return {

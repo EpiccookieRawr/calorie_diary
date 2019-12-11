@@ -45,6 +45,39 @@ ul {
   .display-field p {
     font-size: 1.1rem; }
 
+.lds-dual-ring {
+  display: inline-block;
+  width: 64px;
+  height: 64px; }
+
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 46px;
+  height: 46px;
+  margin: 1px;
+  border-radius: 50%;
+  border: 5px solid #cc0f0f;
+  border-color: #cc0f0f transparent #cc0f0f transparent;
+  animation: lds-dual-ring 1.2s linear infinite; }
+
+.overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
+
 #diary-entry {
   margin: 2rem; }
   #diary-entry .heading {
@@ -62,8 +95,9 @@ ul {
         font-size: 1.2rem;
         margin-bottom: 1rem; }
       #diary-entry .main-content .left-column .search-results, #diary-entry .main-content .left-column .recent-added {
+        position: relative;
         margin-bottom: 2rem; }
-        #diary-entry .main-content .left-column .search-results ol li, #diary-entry .main-content .left-column .recent-added ol li {
+        #diary-entry .main-content .left-column .search-results ul li, #diary-entry .main-content .left-column .recent-added ul li {
           margin-bottom: 0.5rem;
           margin-left: 0.5rem;
           cursor: pointer; }
@@ -84,7 +118,7 @@ ul {
           #diary-entry .main-content .left-column .search-results .result-details .results-items p:first-child {
             font-weight: bold; }
       #diary-entry .main-content .left-column .recent-added {
-        height: 300px;
+        height: 350px;
         margin-bottom: 0rem; }
       #diary-entry .main-content .left-column .new-item-div {
         height: 120px; }
@@ -95,7 +129,8 @@ ul {
           #diary-entry .main-content .left-column .new-item-div input:focus {
             border-color: #26B6E9; }
     #diary-entry .main-content .right-column {
-      flex-basis: 65%; }
+      flex-basis: 65%;
+      position: relative; }
       #diary-entry .main-content .right-column .product-info {
         margin: 1rem; }
         #diary-entry .main-content .right-column .product-info .general-info {
@@ -169,6 +204,9 @@ ul {
               margin-bottom: 0.2rem; }
             #diary-entry .main-content .right-column .product-info .graphical-info .ingredient-label .extra-info span {
               font-weight: bold; }
+        #diary-entry .main-content .right-column .product-info .ingredient-chart h3 {
+          text-align: center;
+          margin-bottom: 1rem; }
       #diary-entry .main-content .right-column .meal-section {
         margin-bottom: 1rem; }
         #diary-entry .main-content .right-column .meal-section h2 {
