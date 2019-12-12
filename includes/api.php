@@ -91,5 +91,19 @@ if(isset($_GET['search'])) {
 
 if(isset($_GET['productID'])){
   $response = $nutritionix_api->search($_GET['productID']);
-  echo json_encode($response);
+  if($response['status'] != 'success') {
+    $get_cached_data = json_decode(file_get_contents('../cache/cached_data.json'), true); 
+    $cached_array_keys = array_keys($get_cached_data);
+    $random_key = $cached_array_keys[rand(0, count($get_cached_data) - 1)];
+    $get_cached_response = array(
+      'status' => 'success',
+      'response' => array( //add cached results
+        'foods' => array($get_cached_data[$random_key])
+      ),
+      'cached' => true
+    );
+    echo json_encode($get_cached_response);
+  } else {
+    echo json_encode($response);
+  }
 }

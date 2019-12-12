@@ -512,7 +512,7 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl, cacheCtrl){
                 document.querySelector(uISelector.rightColumn).appendChild(uICtrl.loadingSpinner());
             }
             findFoodID = e.target.parentElement.id.match(/^item-id-([\w\d]*)$/);
-            if(findFoodID.length > 0) { 
+            if(findFoodID.length > 0) {
                 itemID = findFoodID[1];
                 dataCtrl.getProductResult(itemID).then(data => {
                     if(data.status === 'success') {
@@ -524,6 +524,15 @@ const appCtrl = (function(dataCtrl, uICtrl, productDetailCtrl, cacheCtrl){
                             productDetailCtrl.intializeChart(productDetailCtrl.foodData);
                             uICtrl.showRecentSelections();
                         }
+                    }
+
+                    if(data.hasOwnProperty('cached')) {
+                        const cachedDataHeader = document.createElement('h3');
+                        cachedDataHeader.innerText = 'From cached data, due to API limitation';
+                        cachedDataHeader.style.font = '20px';
+                        cachedDataHeader.style.color = 'red';
+                        cachedDataHeader.style.textAlign = "center";
+                        document.querySelector('.product-info').insertAdjacentElement('afterbegin', cachedDataHeader);
                     }
                     document.querySelector(uISelector.rightColumn + ' .lds-dual-ring').remove();
                 }).catch( error => console.log(error));
